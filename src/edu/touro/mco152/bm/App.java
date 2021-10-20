@@ -229,12 +229,18 @@ public class App {
         worker.cancel(true);
     }
 
+    /**
+     * I think it would be more efficient if another bentch mark was in progress you would
+     * have the ability to terminate the first one and not have this one automatically abort
+     */
     public static void startBenchmark() {
 
         //1. check that there isn't already a worker in progress
         if (state == State.DISK_TEST_STATE) {
             //if (!worker.isCancelled() && !worker.isDone()) {
             msg("Test in progress, aborting...");
+            //AS added this for how else will it abort ??
+            worker.cancel(true);
             return;
             //}
         }
