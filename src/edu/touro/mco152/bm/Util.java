@@ -22,6 +22,12 @@ public class Util {
      * @param path Directory to delete
      * @return True if path deleted successfully
      */
+
+    /**
+     * should delete directory be public??
+     * @param path
+     * @return
+     */
     static public boolean deleteDirectory(File path) {
         if (path.exists()) {
             File[] files = path.listFiles();
