@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'lcmbadbm'
-include('lib')
+include('badbm')
