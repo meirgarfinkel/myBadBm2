@@ -37,6 +37,7 @@ import static edu.touro.mco152.bm.DiskMark.MarkType.WRITE;
 public class DiskWorker {
 
     private final IuI ui;
+    private final Executor executor = new Executor();
 
     public DiskWorker(IuI ui) {
         this.ui = ui;
@@ -44,10 +45,18 @@ public class DiskWorker {
 
     public boolean start() throws Exception {
 
+        if (readTest)
+            executor.addCommand(new ReadCommand(numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
+
+        if (writeTest)
+            executor.addCommand(new WriteCommand(numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
+
         System.out.println("*** starting new worker thread");
         msg("Running readTest " + App.readTest + "   writeTest " + App.writeTest);
         msg("num files: " + App.numOfMarks + ", num blks: " + App.numOfBlocks
                 + ", blk size (kb): " + App.blockSizeKb + ", blockSequence: " + App.blockSequence);
+
+        executor.executeCommands();
 
 
         Gui.updateLegend();
