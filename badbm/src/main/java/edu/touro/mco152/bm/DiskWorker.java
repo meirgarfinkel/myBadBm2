@@ -1,5 +1,6 @@
 package edu.touro.mco152.bm;
 
+import edu.touro.mco152.bm.persist.DatabaseObserver;
 import edu.touro.mco152.bm.persist.DiskRun;
 import edu.touro.mco152.bm.persist.EM;
 import edu.touro.mco152.bm.ui.Gui;
@@ -45,11 +46,21 @@ public class DiskWorker {
 
     public boolean start() throws Exception {
 
-        if (readTest)
-            executor.addCommand(new ReadCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
+        if (readTest) {
+            ReadCommand command = new ReadCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence);
+            command.registerObserver(new DatabaseObserver());
+            command.registerObserver(new Gui());
 
-        if (writeTest)
-            executor.addCommand(new WriteCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
+            executor.addCommand(command);
+        }
+
+        if (writeTest) {
+            WriteCommand command = new WriteCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence);
+            command.registerObserver(new DatabaseObserver());
+            command.registerObserver(new Gui());
+
+            executor.addCommand(command);
+        }
 
         System.out.println("*** starting new worker thread");
         msg("Running readTest " + App.readTest + "   writeTest " + App.writeTest);

@@ -1,5 +1,7 @@
 package edu.touro.mco152.bm;
 
+import edu.touro.mco152.bm.observe.Observable;
+import edu.touro.mco152.bm.observe.Observer;
 import edu.touro.mco152.bm.persist.DiskRun;
 import edu.touro.mco152.bm.persist.DiskRun.BlockSequence;
 import edu.touro.mco152.bm.persist.EM;
@@ -9,20 +11,25 @@ import jakarta.persistence.EntityManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static edu.touro.mco152.bm.App.*;
 import static edu.touro.mco152.bm.DiskMark.MarkType.WRITE;
 
-public class WriteCommand implements ICommand {
+public class WriteCommand implements ICommand, Observable {
+
+    private final List<Observer> observerList = new ArrayList<>();
 
     private final IuI ui;
     private final int numOfMarks;
     private final int numOfBlocks;
     private final int blockSizeKb;
-    private final BlockSequence blockSequence;
+    private final DiskRun.BlockSequence blockSequence;
+    private final DiskRun run;
 
     public WriteCommand(IuI ui, int numOfMarks, int numOfBlocks, int blockSizeKb, BlockSequence sequence) {
         this.ui = ui;
@@ -30,6 +37,7 @@ public class WriteCommand implements ICommand {
         this.numOfBlocks = numOfBlocks;
         this.blockSizeKb = blockSizeKb;
         this.blockSequence = sequence;
+        this.run = new DiskRun(DiskRun.IOMode.WRITE, blockSequence);
     }
 
     @Override
@@ -54,8 +62,6 @@ public class WriteCommand implements ICommand {
             }
         }
 
-
-        DiskRun run = new DiskRun(DiskRun.IOMode.WRITE, blockSequence);
         run.setNumMarks(numOfMarks);
         run.setNumBlocks(numOfBlocks);
         run.setBlockSize(blockSizeKb);
@@ -141,16 +147,25 @@ public class WriteCommand implements ICommand {
             run.setRunMin(wMark.getCumMin());
             run.setRunAvg(wMark.getCumAvg());
             run.setEndTime(new Date());
-        } // END outer loop for specified duration (number of 'marks') for WRITE bench mark
+        }
+        notifyObservers();
+    }
 
-            /*
-              Persist info about the Write BM Run (e.g. into Derby Database) and add it to a GUI panel
-             */
-        EntityManager em = EM.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(run);
-        em.getTransaction().commit();
+    @Override
+    public void registerObserver(Observer o) {
+        observerList.add(o);
+    }
 
-        Gui.runPanel.addRun(run);
+    @Override
+    public void unregisterObserver(Observer o) {
+        observerList.remove(o);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer o :
+                observerList) {
+            o.update(run);
+        }
     }
 }

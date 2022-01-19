@@ -1,5 +1,7 @@
 package edu.touro.mco152.bm;
 
+import edu.touro.mco152.bm.observe.Observable;
+import edu.touro.mco152.bm.observe.Observer;
 import edu.touro.mco152.bm.persist.DiskRun;
 import edu.touro.mco152.bm.persist.EM;
 import edu.touro.mco152.bm.ui.Gui;
@@ -9,20 +11,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static edu.touro.mco152.bm.App.*;
 import static edu.touro.mco152.bm.DiskMark.MarkType.READ;
 
-public class ReadCommand implements ICommand {
+public class ReadCommand implements ICommand, Observable {
+
+    private final List<Observer> observerList = new ArrayList<>();
 
     private final IuI ui;
     private final int numOfMarks;
     private final int numOfBlocks;
     private final int blockSizeKb;
     private final DiskRun.BlockSequence blockSequence;
+    private final DiskRun run;
 
     public ReadCommand(IuI ui, int numOfMarks, int numOfBlocks, int blockSizeKb, DiskRun.BlockSequence sequence) {
         this.ui = ui;
@@ -30,6 +37,7 @@ public class ReadCommand implements ICommand {
         this.numOfBlocks = numOfBlocks;
         this.blockSizeKb = blockSizeKb;
         this.blockSequence = sequence;
+        this.run = new DiskRun(DiskRun.IOMode.READ, blockSequence);
     }
 
     @Override
@@ -52,8 +60,6 @@ public class ReadCommand implements ICommand {
         int startFileNum = App.nextMarkNumber;
         DiskMark rMark;
 
-
-        DiskRun run = new DiskRun(DiskRun.IOMode.READ, blockSequence);
         run.setNumMarks(numOfMarks);
         run.setNumBlocks(numOfBlocks);
         run.setBlockSize(blockSizeKb);
@@ -110,12 +116,24 @@ public class ReadCommand implements ICommand {
             run.setRunAvg(rMark.getCumAvg());
             run.setEndTime(new Date());
         }
+        notifyObservers();
+    }
 
-        EntityManager em = EM.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(run);
-        em.getTransaction().commit();
+    @Override
+    public void registerObserver(Observer o) {
+        observerList.add(o);
+    }
 
-        Gui.runPanel.addRun(run);
+    @Override
+    public void unregisterObserver(Observer o) {
+        observerList.remove(o);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer o :
+                observerList) {
+            o.update(run);
+        }
     }
 }
