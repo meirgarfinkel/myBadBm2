@@ -18,12 +18,14 @@ import static edu.touro.mco152.bm.DiskMark.MarkType.READ;
 
 public class ReadCommand implements ICommand {
 
+    private final IuI ui;
     private final int numOfMarks;
     private final int numOfBlocks;
     private final int blockSizeKb;
     private final DiskRun.BlockSequence blockSequence;
 
-    public ReadCommand(int numOfMarks, int numOfBlocks, int blockSizeKb, DiskRun.BlockSequence sequence) {
+    public ReadCommand(IuI ui, int numOfMarks, int numOfBlocks, int blockSizeKb, DiskRun.BlockSequence sequence) {
+        this.ui = ui;
         this.numOfMarks = numOfMarks;
         this.numOfBlocks = numOfBlocks;
         this.blockSizeKb = blockSizeKb;

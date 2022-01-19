@@ -46,10 +46,10 @@ public class DiskWorker {
     public boolean start() throws Exception {
 
         if (readTest)
-            executor.addCommand(new ReadCommand(numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
+            executor.addCommand(new ReadCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
 
         if (writeTest)
-            executor.addCommand(new WriteCommand(numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
+            executor.addCommand(new WriteCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
 
         System.out.println("*** starting new worker thread");
         msg("Running readTest " + App.readTest + "   writeTest " + App.writeTest);

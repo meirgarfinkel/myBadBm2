@@ -18,12 +18,14 @@ import static edu.touro.mco152.bm.DiskMark.MarkType.WRITE;
 
 public class WriteCommand implements ICommand {
 
+    private final IuI ui;
     private final int numOfMarks;
     private final int numOfBlocks;
     private final int blockSizeKb;
     private final BlockSequence blockSequence;
 
-    public WriteCommand(int numOfMarks, int numOfBlocks, int blockSizeKb, BlockSequence sequence) {
+    public WriteCommand(IuI ui, int numOfMarks, int numOfBlocks, int blockSizeKb, BlockSequence sequence) {
+        this.ui = ui;
         this.numOfMarks = numOfMarks;
         this.numOfBlocks = numOfBlocks;
         this.blockSizeKb = blockSizeKb;
