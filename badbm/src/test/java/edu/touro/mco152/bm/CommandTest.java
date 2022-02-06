@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * unit tests for command pattern
+ */
 public class CommandTest implements IuI{
 
     private int percentComplete = 0;
