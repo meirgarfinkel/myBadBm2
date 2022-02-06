@@ -1,5 +1,6 @@
 package edu.touro.mco152.bm;
 
+import edu.touro.mco152.bm.persist.DatabaseObserver;
 import edu.touro.mco152.bm.persist.DiskRun;
 import edu.touro.mco152.bm.persist.EM;
 import edu.touro.mco152.bm.ui.Gui;
@@ -43,13 +44,36 @@ public class DiskWorker {
         this.ui = ui;
     }
 
+    /**
+     * begins the benchmark
+     * @return true when done
+     * @throws Exception if interrupted
+     */
     public boolean start() throws Exception {
 
-        if (readTest)
-            executor.addCommand(new ReadCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
+        /**
+         * if read test is selected, register database observer, slack observer, and gui observer
+         * and run executor
+         */
+        if (readTest) {
+            ReadCommand command = new ReadCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence);
+            command.registerObserver(new DatabaseObserver());
+            command.registerObserver(new SlackNotifier());
+            command.registerObserver(new Gui());
 
-        if (writeTest)
-            executor.addCommand(new WriteCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence));
+            executor.addCommand(command);
+        }
+        /**
+         * if write test is selected, register database observer, and gui observer
+         * and run executor
+         */
+        if (writeTest) {
+            WriteCommand command = new WriteCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence);
+            command.registerObserver(new DatabaseObserver());
+            command.registerObserver(new Gui());
+
+            executor.addCommand(command);
+        }
 
         System.out.println("*** starting new worker thread");
         msg("Running readTest " + App.readTest + "   writeTest " + App.writeTest);
