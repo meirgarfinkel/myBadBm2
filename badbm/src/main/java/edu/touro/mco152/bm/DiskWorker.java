@@ -44,16 +44,29 @@ public class DiskWorker {
         this.ui = ui;
     }
 
+    /**
+     * begins the benchmark
+     * @return true when done
+     * @throws Exception if interrupted
+     */
     public boolean start() throws Exception {
 
+        /**
+         * if read test is selected, register database observer, slack observer, and gui observer
+         * and run executor
+         */
         if (readTest) {
             ReadCommand command = new ReadCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence);
             command.registerObserver(new DatabaseObserver());
+            command.registerObserver(new SlackNotifier());
             command.registerObserver(new Gui());
 
             executor.addCommand(command);
         }
-
+        /**
+         * if write test is selected, register database observer, and gui observer
+         * and run executor
+         */
         if (writeTest) {
             WriteCommand command = new WriteCommand(ui, numOfMarks, numOfBlocks, blockSizeKb, blockSequence);
             command.registerObserver(new DatabaseObserver());

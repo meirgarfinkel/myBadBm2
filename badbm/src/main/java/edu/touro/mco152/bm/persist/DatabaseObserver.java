@@ -3,6 +3,9 @@ package edu.touro.mco152.bm.persist;
 import edu.touro.mco152.bm.observe.Observer;
 import jakarta.persistence.EntityManager;
 
+/**
+ * performs database operations when notified
+ */
 public class DatabaseObserver implements Observer {
 
     @Override

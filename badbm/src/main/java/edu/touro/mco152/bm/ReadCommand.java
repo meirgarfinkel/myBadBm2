@@ -20,6 +20,9 @@ import java.util.logging.Logger;
 import static edu.touro.mco152.bm.App.*;
 import static edu.touro.mco152.bm.DiskMark.MarkType.READ;
 
+/**
+ * this class performs the read test and notifies the observers when complete
+ */
 public class ReadCommand implements ICommand, Observable {
 
     private final List<Observer> observerList = new ArrayList<>();
@@ -119,16 +122,25 @@ public class ReadCommand implements ICommand, Observable {
         notifyObservers();
     }
 
+    /**
+     * @param o observervable to observe
+     */
     @Override
     public void registerObserver(Observer o) {
         observerList.add(o);
     }
 
+    /**
+     * @param o observable to stop observing
+     */
     @Override
     public void unregisterObserver(Observer o) {
         observerList.remove(o);
     }
 
+    /**
+     * notify observers that completed
+     */
     @Override
     public void notifyObservers() {
         for (Observer o :

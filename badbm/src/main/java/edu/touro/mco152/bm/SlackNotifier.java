@@ -3,6 +3,10 @@ package edu.touro.mco152.bm;
 import edu.touro.mco152.bm.observe.Observer;
 import edu.touro.mco152.bm.persist.DiskRun;
 
+/**
+ * The slackNotifier class checks if the benchmark was too slow or didn't have data, and sends a slack message
+ * if either are true
+ */
 public class SlackNotifier implements Observer {
 
     SlackManager manager = new SlackManager("BadBm");

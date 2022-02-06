@@ -11,15 +11,15 @@ import java.io.*;
 import java.util.logging.*;
 
 /**
- * A Slack Manager for BadBM that just knows how to send a string msg to a pre-designated channel
- * whose token is in an external file.
+ * A BadBM slack manager that just sends a string msg to a pre-designated channel
+ * using a token in an external file.
  * Usage:
  * SlackManager slackmgr = new SlackManager("myAppName");
  * Boolean worked = slackmgr.postMsg2OurChannel(":smile: Benchmark completed");
  */
 public class SlackManager {
     private static Logger log = Logger.getLogger("SlackManager");
-    private static Slack slack = null;  // obtain/keep one copy of expensive item
+    private static Slack slack = null;  // keep one copy of expensive item
 
     /**
      * The channel we will send all our messages to
@@ -32,7 +32,7 @@ public class SlackManager {
     }
 
     /**
-     * Construct a Slack Manager for our application, to be used for sending messages to Slack
+     * Construct a Slack Manager for our application, to send messages to slack
      *
      * @param appName - pass a sring like BadBM, or whatever name you want to appear in msgs
      */
@@ -89,7 +89,6 @@ public class SlackManager {
             return false;
         }
 
-
         if (response.isOk()) {
             return true;
         } else {
@@ -100,10 +99,10 @@ public class SlackManager {
 
     /**
      * Obtain Slack security token for our bot/app/channel from file slacktoken.txt.
-     * Cant be in code in case gets checked in to Github,
+     * Can't be in code, in case gets checked in to Github,
      * which is illegal acc to Slack and will get invalidated when detected.
      * <p>
-     * If the token is a bot token, it starts with `xoxb-` while if it's a user token, it starts with `xoxp-`
+     * If the token is a bot token, it starts with `xoxb-` but if it's a user token, it starts with `xoxp-`
      */
     private String getSlackToken() {
         String token = "Unknown Slack Token";
@@ -119,6 +118,5 @@ public class SlackManager {
 
         return token;   // may be actual token or dummy string
     }
-
 }
 
