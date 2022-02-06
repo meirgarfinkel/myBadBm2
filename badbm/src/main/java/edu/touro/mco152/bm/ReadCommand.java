@@ -16,6 +16,9 @@ import java.util.logging.Logger;
 import static edu.touro.mco152.bm.App.*;
 import static edu.touro.mco152.bm.DiskMark.MarkType.READ;
 
+/**
+ * this class performs the read test and notifies the observers when complete
+ */
 public class ReadCommand implements ICommand {
 
     private final IuI ui;

@@ -16,6 +16,9 @@ import java.util.logging.Logger;
 import static edu.touro.mco152.bm.App.*;
 import static edu.touro.mco152.bm.DiskMark.MarkType.WRITE;
 
+/**
+ * this class performs the write test and notifies the observers when complete
+ */
 public class WriteCommand implements ICommand {
 
     private final IuI ui;
